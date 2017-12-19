@@ -1,0 +1,24 @@
+{
+  "name": "exacl",
+  "version": "1.0.0",
+  "description": "ACL permissions middleware for expressJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=html --reporter=lcov mocha -R spec test"
+  },
+  "keywords": [
+    "ACL",
+    "express"
+  ],
+  "author": "LE BARO Romain",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scandinave/exacl.git"
+  }
+}
