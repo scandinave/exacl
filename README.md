@@ -97,7 +97,7 @@ __exacl__ uses a fluent API to generate express middleware for enforcing permiss
 ```js
 const authorization = require("../authorization.js"); // Where the authorizer was configured previously.
 
-app.get('/restricted', authorization.authorizer..isPermitted("restricted:view"), (req, res) => {
+app.get('/restricted', authorization.authorizer.isPermitted("restricted:view"), (req, res) => {
   // Restricted content
   ...
 })
