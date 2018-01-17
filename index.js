@@ -35,7 +35,7 @@ class Authorizer {
    */
   static isPermitted(...permissions) {
     return (req, res, next) => {
-      Authorizer.withPrincipal(req).then(principal => {
+      Authorizer.withPrincipal(req, res).then(principal => {
         if (Authorizer.checkPermissions(principal, Authorizer.flattenPermissions(permissions))) {
           next();
         } else {
@@ -69,14 +69,13 @@ class Authorizer {
    * Return the principal object.
    * @param {request} req the request object.
    * @param {request} res the request response object.
-   * @param {request} done the done object.
    * @return {user} The principal object
    */
-  static withPrincipal(req, res, done) {
+  static withPrincipal(req, res) {
     const principal = req.user || (req.session ? req.session.user || null : null);
     if (principal === null) {
-      throw new Error(`No principal found. 
-      You must pass a user object in the request, in the request.session or 
+      throw new Error(`No principal found.
+      You must pass a user object in the request, in the request.session or
       defined the withPrincipal function of the authorizer`);
     } else if (!principal.permissions) {
       throw new Error(`Principal object found. but it does do contains a 'permissions' property`);
