@@ -10,11 +10,11 @@ A rewrite of exacl with ES6 features and bugfix.
 
 ## Basic usage
 ```js
-var express = require('express')
-var app = express()
-var authorizer = require('express-acl')
+const express = require('express')
+const app = express()
+const authorization = require("./my_custom_authorization.js");
 
-app.get('/restricted', authorizer.isPermitted("restricted:view"), function(req, res) {
+app.get('/restricted', authorization.authorizer.isPermitted("restricted:view"), (req, res) => {
   // Restricted content
   ...
 })
@@ -95,7 +95,7 @@ authorizer.options.onDenied = (err, res) => {
 
 __exacl__ uses a fluent API to generate express middleware for enforcing permissions.
 ```js
-const authorization = require("../authorization.js"); // Where the authorizer was configured previously.
+const authorization = require("./authorization.js"); // Where the authorizer was configured previously.
 
 app.get('/restricted', authorization.authorizer.isPermitted("restricted:view"), (req, res) => {
   // Restricted content
