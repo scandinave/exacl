@@ -104,17 +104,17 @@ class Authorizer {
     permissions = Authorizer.flattenPermissions(permissions);
     if (permissions.length === 1) {
       permissions[0] = permissions[0].replace(new RegExp('[\*]', 'g'), '[a-zA-Z0-9\-_:\*]*')
-        .replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\?]?').replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\+]+');
+        .replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\?]?').replace(new RegExp('[\+]', 'g'), '[a-zA-Z0-9\-_:\+]+');
     } else {
       permissions = permissions.reduce((previousPermission, currentPermission) => {
         currentPermission = currentPermission.replace(new RegExp('[\*]', 'g'), '[a-zA-Z0-9\-_:\*]*')
-          .replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\?]?').replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\+]+');
+          .replace(new RegExp('[\?]', 'g'), '[a-zA-Z0-9\-_:\?]?').replace(new RegExp('[\+]', 'g'), '[a-zA-Z0-9\-_:\+]+');
 
         return `${previousPermission})|(${currentPermission}`;
       });
     }
 
-    return `^(${permissions})$`;
+    return `^((${permissions}))$`;
   }
 
   /**
