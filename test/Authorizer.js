@@ -1,3 +1,5 @@
+'use strict';
+
 const Authorizer = require('../index');
 const expect = require('chai').expect;
 const should = require('chai').should();
@@ -7,7 +9,7 @@ const assert = require('assert');
 /* global describe */
 /* global it */
 
-const permission = 'private:users:view';
+const permission = 'private:video:view';
 const permissionsParent = 'private:users';
 const permissionWildcard = 'private:users:*';
 const permissionOne = 'private:users:1';
@@ -41,17 +43,17 @@ describe('Flatten array', () => {
 
 describe('Permissions compilation', () => {
   it('sould return the compile form of one permission', () => {
-    expect(Authorizer.compilePermissions(permission)).to.be.equals('^(private:users:view)$');
+    expect(Authorizer.compilePermissions(permission)).to.be.equals('^((private:video:view))$');
   });
 
   it('sould return the compile form of a wildcard permission', () => {
     const compilePermission = Authorizer.compilePermissions(permissionWildcard);
-    expect(compilePermission).to.be.equals('^(private:users:[a-zA-Z0-9\-_:\*\]*)$');
+    expect(compilePermission).to.be.equals('^((private:users:[a-zA-Z0-9\-_:\*\]*))$');
   });
 
   it('sould return the compile form of an array of permissions', () => {
     const arrayCompiled = Authorizer.compilePermissions(permissions);
-    expect(arrayCompiled).to.be.equals('^(private:users:add)|(private:users:[a-zA-Z0-9\-_:\*]*)|(private:applications:[a-zA-Z0-9\-_:\*]*:logs)|(private:users:list)|(private:users:[a-zA-Z0-9\-_:\?]?)|(private:users:[a-zA-Z0-9\-_:\+]+)$');
+    expect(arrayCompiled).to.be.equals('^((private:users:add)|(private:users:[a-zA-Z0-9\-_:\*]*)|(private:applications:[a-zA-Z0-9\-_:\*]*:logs)|(private:users:list)|(private:users:[a-zA-Z0-9\-_:\?]?)|(private:users:[a-zA-Z0-9\-_:\+]+))$');
   });
 });
 
@@ -114,9 +116,16 @@ describe('Principal check', () => {
   describe('Principal permissions check', () => {
     it('should return that the principal has correct permissions', () => {
       expect(Authorizer.checkPermissions(principal, [permissions])).to.be.equal(true);
+    });
+
+    it('should return that the principal has correct permissions private:users:*', () => {
       expect(Authorizer.checkPermissions(principal, [permissionWildcard])).to.be.equal(true);
+    });
+
+    it('should return that the principal has correct permissions private:users:1', () => {
       expect(Authorizer.checkPermissions(principal, [permissionOne])).to.be.equal(true);
     });
+
 
     it('should return that the principal has no permissions', () => {
       expect(Authorizer.checkPermissions(principal, permission)).to.be.equal(false);

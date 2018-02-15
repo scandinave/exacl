@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * MIT License
 
@@ -48,6 +50,25 @@ class Authorizer {
   }
 
   /**
+   * Check that the Princical has the correct permission. This is the equivalent of isPermitted middleware but in a method that can be use anyware.
+   * @param {*} req The request
+   * @param {*} res the response
+   * @param {*} permissions The permissions to check against Principal permissions
+   * @return {boolean} True if the principal has the permission. false otherwise.
+   */
+  static async checkIsPermitted(req, res, ...permissions) {
+    try {
+      const principal = await Authorizer.withPrincipal(req, res);
+      if (Authorizer.checkPermissions(principal, Authorizer.flattenPermissions(permissions))) {
+        return true;
+      }
+      Authorizer.onDenied(new Error('You are not allowed to access this resources'), res);
+    } catch (err) {
+      Authorizer.onDenied(err, res);
+    }
+  }
+
+  /**
    * Check that the Princical has the correct permission.
    * @param {*} principal The principal against which validate permissions
    * @param {*} permissions The permissions to check against Principal permissions
@@ -56,6 +77,7 @@ class Authorizer {
   static checkPermissions(principal, permissions) {
 
     const principalPermissions = Authorizer.compilePermissions(principal.permissions);
+    permissions = Authorizer.flattenPermissions(permissions);
     let found = false;
     let i = 0;
     while (found === false && permissions.length !== 0 && i < permissions.length) {
