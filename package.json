@@ -1,6 +1,6 @@
 {
   "name": "exacl",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "ACL permissions middleware for expressJS",
   "main": "index.js",
   "scripts": {
