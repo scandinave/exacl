@@ -41,10 +41,10 @@ class Authorizer {
         if (Authorizer.checkPermissions(principal, Authorizer.flattenPermissions(permissions))) {
           next();
         } else {
-          Authorizer.onDenied(new Error('You are not allowed to access this resources'), res);
+          Authorizer.onDenied(res);
         }
       }).catch(err => {
-        Authorizer.onDenied(err, res);
+        throw new Error(err);
       });
     };
   }
@@ -62,9 +62,9 @@ class Authorizer {
       if (Authorizer.checkPermissions(principal, Authorizer.flattenPermissions(permissions))) {
         return true;
       }
-      Authorizer.onDenied(new Error('You are not allowed to access this resources'), res);
+      return false;
     } catch (err) {
-      Authorizer.onDenied(err, res);
+      throw new Error(err);
     }
   }
 
@@ -75,17 +75,21 @@ class Authorizer {
    * @return {boolean} true if the principal has correct permission. False otherwise.
    */
   static checkPermissions(principal, permissions) {
+    if (principal.permissions.length !== 0) {
 
-    const principalPermissions = Authorizer.compilePermissions(principal.permissions);
-    permissions = Authorizer.flattenPermissions(permissions);
-    let found = false;
-    let i = 0;
-    while (found === false && permissions.length !== 0 && i < permissions.length) {
-      found = new RegExp(principalPermissions).test(permissions[i]);
-      i++;
+      const principalPermissions = Authorizer.compilePermissions(principal.permissions);
+      permissions = Authorizer.flattenPermissions(permissions);
+      let found = false;
+      let i = 0;
+      while (found === false && permissions.length !== 0 && i < permissions.length) {
+        found = new RegExp(principalPermissions).test(permissions[i]);
+        i++;
+      }
+
+      return found;
     }
 
-    return found;
+    return false;
   }
   /**
    * Return the principal object.
@@ -113,8 +117,8 @@ class Authorizer {
    * @param {*} res The request response object.
    * @return {void}
    */
-  static onDenied(err, res) {
-    res.status(403).send({error: err});
+  static onDenied(res) {
+    res.status(403).send({error: 'You are not allowed to access this resources'});
   }
 
   /**
